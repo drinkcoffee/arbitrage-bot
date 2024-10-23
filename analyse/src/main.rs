@@ -1,7 +1,7 @@
 use alloy::{
     primitives::{address, Address, U256},
     providers::{Provider, ProviderBuilder},
-    sol
+    sol,
 };
 // use alloy::{
 //     network::EthereumWallet,
@@ -15,7 +15,6 @@ use alloy::{
 use eyre::Result;
 use uniswap_sdk_core::{prelude::Token, token};
 use uniswap_v3_sdk::prelude::*;
-
 
 fn main() {
     println!("Analyse");
@@ -54,12 +53,11 @@ pub fn stuff1() {
     // LOW = 500,
     // MEDIUM = 3000,
     // HIGH = 10000,
-
 }
 
 #[tokio::main]
 async fn stuff2(uni3_pool_eth_imx: Address) -> Result<()> {
-     // Set up the HTTP transport which is consumed by the RPC client.
+    // Set up the HTTP transport which is consumed by the RPC client.
     //     let rpc_url = "https://eth.merkle.io".parse()?;
     let rpc_url = "https://rpc.immutable.com".parse()?;
 
@@ -75,12 +73,8 @@ async fn stuff2(uni3_pool_eth_imx: Address) -> Result<()> {
 
     println!("Slot 0: {storage:?}");
 
-    Ok(())    
+    Ok(())
 }
-
-
-
-
 
 // See https://alloy.rs/highlights/the-sol!-procedural-macro.html
 sol! {
@@ -92,7 +86,7 @@ sol! {
         function approve(address spender, uint256 amount) external returns (bool);
         function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
         event Transfer(address indexed from, address indexed to, uint256 value);
-        event Approval(address indexed owner, address indexed spender, uint256 value);        
+        event Approval(address indexed owner, address indexed spender, uint256 value);
         function symbol() public view returns (string);
     }
 }
@@ -101,15 +95,14 @@ sol! {
 async fn stuff3() -> Result<()> {
     let imx_addr = address!("3A0C2Ba54D6CBd3121F01b96dFd20e99D1696C9D");
 
-
     // Set up the HTTP transport which is consumed by the RPC client.
     let rpc_url = "https://rpc.immutable.com".parse()?;
     // Create a provider with the HTTP transport using the `reqwest` crate.
     let provider = ProviderBuilder::new().on_http(rpc_url);
 
-    let contract = IERC20Extended::new(provider, imx_addr);
+    //let contract = IERC20Extended::new(provider, imx_addr);
 
-    println!("Contract at address: {}", contract.address());
+    //println!("Contract at address: {}", contract.address());
 
     // let builder = contract.setNumber(U256::from(42));
     // let tx_hash = builder.send().await?.watch().await?;
