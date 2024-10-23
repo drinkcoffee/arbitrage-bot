@@ -1,6 +1,7 @@
 use alloy::{
     primitives::{address, Address, U256},
     providers::{Provider, ProviderBuilder},
+    sol
 };
 // use alloy::{
 //     network::EthereumWallet,
@@ -23,6 +24,8 @@ fn main() {
 
     let uni3_pool_eth_imx = address!("EE997F15Eaca3012E4825F1AeFE12136216CF3AF");
     stuff2(uni3_pool_eth_imx).ok();
+
+    stuff3().ok();
 }
 
 pub fn stuff1() {
@@ -73,4 +76,57 @@ async fn stuff2(uni3_pool_eth_imx: Address) -> Result<()> {
     println!("Slot 0: {storage:?}");
 
     Ok(())    
+}
+
+
+
+
+
+// See https://alloy.rs/highlights/the-sol!-procedural-macro.html
+sol! {
+    contract IERC20Extended {
+        function totalSupply() external view returns (uint256);
+        function balanceOf(address account) external view returns (uint256);
+        function transfer(address recipient, uint256 amount) external returns (bool);
+        function allowance(address owner, address spender) external view returns (uint256);
+        function approve(address spender, uint256 amount) external returns (bool);
+        function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+        event Transfer(address indexed from, address indexed to, uint256 value);
+        event Approval(address indexed owner, address indexed spender, uint256 value);        
+        function symbol() public view returns (string);
+    }
+}
+
+#[tokio::main]
+async fn stuff3() -> Result<()> {
+    let imx_addr = address!("3A0C2Ba54D6CBd3121F01b96dFd20e99D1696C9D");
+
+
+    // Set up the HTTP transport which is consumed by the RPC client.
+    let rpc_url = "https://rpc.immutable.com".parse()?;
+    // Create a provider with the HTTP transport using the `reqwest` crate.
+    let provider = ProviderBuilder::new().on_http(rpc_url);
+
+    let contract = IERC20Extended::new(provider, imx_addr);
+
+    println!("Contract at address: {}", contract.address());
+
+    // let builder = contract.setNumber(U256::from(42));
+    // let tx_hash = builder.send().await?.watch().await?;
+
+    // println!("Set number to 42: {tx_hash}");
+
+    // // Increment the number to 43.
+    // let builder = contract.increment();
+    // let tx_hash = builder.send().await?.watch().await?;
+
+    // println!("Incremented number: {tx_hash}");
+
+    // // Retrieve the number, which should be 43.
+    // let builder = contract.number();
+    // let number = builder.call().await?.number.to_string();
+
+    // println!("Retrieved number: {number}");
+
+    Ok(())
 }
