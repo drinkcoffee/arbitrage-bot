@@ -8,6 +8,9 @@ uniswap-v3-sdk = { workspace = true }
 uniswap-sdk-core = { workspace = true }
 eyre = { workspace = true }
 
-alloy = { version = "0.5", optional = true, features = ["contract"] }
+# alloy = { version = "0.5", optional = true, features = ["full"] }
+alloy = { version = "0.5", features = ["full"] }
 alloy-primitives = "0.8"
 alloy-sol-types = "0.8"
+
+tokio = { version = "1.40", features = ["full"] }
