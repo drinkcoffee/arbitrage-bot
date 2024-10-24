@@ -35,7 +35,7 @@ impl APool for PoolType {
         println!(" Token0:    {:?}", pool.token0.symbol().unwrap());
         println!(" Token1:    {:?}", pool.token1.symbol().unwrap());
         println!(" Fee tier:  {:?}", self.fee);
-        println!(" Pool addr: {:?}", pool.address(None, Some(factory_address)));
+        println!(" Pool addr: {:?}", pool.address(None, Some(self.factory_address)));
         println!(" Liquidity: {:?}", pool.liquidity);
 
         Ok(())
