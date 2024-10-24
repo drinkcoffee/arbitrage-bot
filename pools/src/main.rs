@@ -25,7 +25,10 @@ async fn main() -> Result<()> {
     .await?;
 
     // Use the pool
-    println!("{:?}", pool.token0_price());
+    println!("token0:    {:?}", pool.token0.symbol().unwrap());
+    println!("token1:    {:?}", pool.token1.symbol().unwrap());
+    println!("pool addr: {:?}", pool.address(None, Some(factory_address)));
+    println!("liquidity: {:?}", pool.liquidity);
 
     Ok(())
 }
