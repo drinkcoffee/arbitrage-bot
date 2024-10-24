@@ -1,5 +1,5 @@
 mod pool;
-use pool.APool;
+use pool::APool;
 
 use alloy::providers::ProviderBuilder;
 use eyre::Result;

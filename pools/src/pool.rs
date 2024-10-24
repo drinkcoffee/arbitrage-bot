@@ -4,14 +4,14 @@ use uniswap_sdk_core::{prelude::*, token};
 use uniswap_v3_sdk::prelude::*;
 
 
-struct APool {
+pub struct APool {
     // TODO import Http and Client
-    provider: RootProvider<Http<Client>>,
-    chain_id: u64,
-    factory_address: Address,
-    tok0: Token,
-    tok1: Token,
-    fee: FeeAmount,
+    pub provider: RootProvider<Http<Client>>,
+    pub chain_id: u64,
+    pub factory_address: Address,
+    pub tok0: Token,
+    pub tok1: Token,
+    pub fee: FeeAmount,
 }
 
 
