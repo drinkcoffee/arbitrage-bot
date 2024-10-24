@@ -27,6 +27,7 @@ fn main() {
     stuff3().ok();
 }
 
+// Determine a UniswapV3Pool contract address based on the factory address, token addresses and fee.
 pub fn stuff1() {
     // On Immutable:
     // UniswapV3Factory: https://explorer.immutable.com/address/0x56c2162254b0E4417288786eE402c2B41d4e181e
@@ -55,6 +56,7 @@ pub fn stuff1() {
     // HIGH = 10000,
 }
 
+// Get a storage slot of a contract.
 #[tokio::main]
 async fn stuff2(uni3_pool_eth_imx: Address) -> Result<()> {
     // Set up the HTTP transport which is consumed by the RPC client.
@@ -78,7 +80,28 @@ async fn stuff2(uni3_pool_eth_imx: Address) -> Result<()> {
 
 // See https://alloy.rs/highlights/the-sol!-procedural-macro.html
 sol! {
-    contract IERC20Extended {
+    #[allow(missing_docs)]
+    #[sol(rpc)]    
+    // contract IERC20Extended {
+    //     uint256 public number1;
+
+    //     string public symbol1;
+
+    //     function totalSupply() external view returns (uint256);
+    //     function balanceOf(address account) external view returns (uint256);
+    //     function transfer(address recipient, uint256 amount) external returns (bool);
+    //     function allowance(address owner, address spender) external view returns (uint256);
+    //     function approve(address spender, uint256 amount) external returns (bool);
+    //     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    //     event Transfer(address indexed from, address indexed to, uint256 value);
+    //     event Approval(address indexed owner, address indexed spender, uint256 value);
+    //     function symbol() external view returns (string);
+    // }
+    interface IERC20Extended {
+        // uint256 public number1;
+
+        // string public symbol1;
+
         function totalSupply() external view returns (uint256);
         function balanceOf(address account) external view returns (uint256);
         function transfer(address recipient, uint256 amount) external returns (bool);
@@ -87,10 +110,12 @@ sol! {
         function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
         event Transfer(address indexed from, address indexed to, uint256 value);
         event Approval(address indexed owner, address indexed spender, uint256 value);
-        function symbol() public view returns (string);
+        function symbol() external view returns (string);
     }
+
 }
 
+// Get the symbol and total supply of an ERC20 contract.
 #[tokio::main]
 async fn stuff3() -> Result<()> {
     let imx_addr = address!("3A0C2Ba54D6CBd3121F01b96dFd20e99D1696C9D");
@@ -100,26 +125,20 @@ async fn stuff3() -> Result<()> {
     // Create a provider with the HTTP transport using the `reqwest` crate.
     let provider = ProviderBuilder::new().on_http(rpc_url);
 
-    //let contract = IERC20Extended::new(provider, imx_addr);
+    let erc20_contract = IERC20Extended::new(imx_addr, provider);
 
-    //println!("Contract at address: {}", contract.address());
+    let symbol_builder = erc20_contract.symbol();
+    let symbol = symbol_builder.call().await?._0;
+    println!("Symbol: {symbol}");
 
-    // let builder = contract.setNumber(U256::from(42));
-    // let tx_hash = builder.send().await?.watch().await?;
+    let total_supply_builder = erc20_contract.totalSupply();
+    let total_supply = total_supply_builder.call().await?._0.to_string();
+    println!("Total Supply: {total_supply}");
 
-    // println!("Set number to 42: {tx_hash}");
-
-    // // Increment the number to 43.
-    // let builder = contract.increment();
-    // let tx_hash = builder.send().await?.watch().await?;
-
-    // println!("Incremented number: {tx_hash}");
-
-    // // Retrieve the number, which should be 43.
-    // let builder = contract.number();
-    // let number = builder.call().await?.number.to_string();
-
-    // println!("Retrieved number: {number}");
+    let addr = erc20_contract.address();
+    println!("Contract at address: {}", addr);
 
     Ok(())
 }
+
+
