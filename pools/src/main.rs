@@ -1,11 +1,12 @@
 mod pool;
+use pool.APool;
 
 use alloy::providers::ProviderBuilder;
 use eyre::Result;
 use uniswap_sdk_core::{prelude::*, token};
 use uniswap_v3_sdk::prelude::*;
 
-use pool;
+
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -19,7 +20,7 @@ async fn main() -> Result<()> {
 
     // TODO loop around in a four loop for the various standard fee levels.
     // TODO get this to work
-    med_pool = APoolType{
+    let med_pool = APool{
         provider: provider,
         chain_id: 13371,
         factory_address: factory_address,

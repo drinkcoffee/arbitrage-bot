@@ -4,10 +4,10 @@ use uniswap_sdk_core::{prelude::*, token};
 use uniswap_v3_sdk::prelude::*;
 
 
-struct PoolType {
+struct APool {
     // TODO import Http and Client
     provider: RootProvider<Http<Client>>,
-    chain_id: ChainId,
+    chain_id: u64,
     factory_address: Address,
     tok0: Token,
     tok1: Token,
@@ -15,7 +15,7 @@ struct PoolType {
 }
 
 
-impl APool for PoolType {
+impl APool {
     async fn check_pool(&self) -> Result<()> {
         // Construct a pool
         let pool = Pool::from_pool_key(
