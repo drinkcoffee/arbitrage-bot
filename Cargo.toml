@@ -1,7 +1,7 @@
 [workspace]
 
 resolver = "2"
-members = ["analyse", "pools", "check", "arb", "crates/tokens"]
+members = ["analyse", "pools", "check", "rb", "crates/tokens"]
 
 [workspace.dependencies]
 uniswap-v3-sdk = { version = "2.2.0", features = ["extensions", "std"] }
