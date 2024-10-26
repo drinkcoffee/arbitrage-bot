@@ -4,16 +4,18 @@ use std::{collections::HashMap, fmt::Display};
 use alloy::{
     providers::{Provider, ProviderBuilder},
     transports::Transport, 
-    sol
 };
 use alloy_primitives::{address, Address, ChainId};
-use eyre::{Ok, Result};
+use eyre::Result;
 use uniswap_sdk_core::{
     prelude::{BaseCurrencyCore, Token},
     token,
 };
 use uniswap_v3_sdk::prelude::{FeeAmount, Pool};
 use uniswap_sdk_core::prelude::*;
+
+use tokens::erc20::Erc20;
+use std::result::Result::Ok;
 
 pub struct LiquidityPoolFactory {
     pub token0: Token,
@@ -117,22 +119,6 @@ impl Display for LiquidityPoolFactory {
 }
 
 
-// ERC 20 contract specifying return value names
-sol! {
-    #[sol(rpc)]    
-    interface IERC20 {
-        function totalSupply() external view returns (uint256 supply);
-        function balanceOf(address account) external view returns (uint256 balance);
-        function transfer(address recipient, uint256 amount) external returns (bool success);
-        function allowance(address owner, address spender) external view returns (uint256 allowance);
-        function approve(address spender, uint256 amount) external returns (bool success);
-        function transferFrom(address sender, address recipient, uint256 amount) external returns (bool success);
-        event Transfer(address indexed from, address indexed to, uint256 value);
-        event Approval(address indexed owner, address indexed spender, uint256 value);
-
-        function symbol() external view returns (string sym);
-    }
-}
 
 #[must_use]
 async fn is_invalid_contract(url: &str, addr: Address) -> Result<bool> {
@@ -169,11 +155,20 @@ async fn main() -> Result<()> {
         panic!("Token 1 address is not a valid contract: {}", tok1_address);
     }
 
-    let tok0_contract = IERC20::new(tok0_address, &provider);
-    let tok0_symbol = tok0_contract.symbol().call().await?.sym;
 
-    let tok1_contract = IERC20::new(tok0_address, &provider);
-    let tok1_symbol = tok1_contract.symbol().call().await?.sym;
+    let tok0_contract = Erc20::new(tok0_address, &provider).await?;
+    let tok0_symbol_result = tok0_contract.symbol().await;
+    let tok0_symbol = match tok0_symbol_result {
+        Ok(res) => res,
+        Err(error) => panic!("Problem fetching Token 0 ERC20 symbol: {error:?}"),
+    };
+
+    let tok1_contract = Erc20::new(tok1_address, &provider).await?;
+    let tok1_symbol_result = tok1_contract.symbol().await;
+    let tok1_symbol = match tok1_symbol_result {
+        Ok(res) => res,
+        Err(error) => panic!("Problem fetching Token 1 ERC20 symbol: {error:?}"),
+    };
 
 
     // Construct a pool

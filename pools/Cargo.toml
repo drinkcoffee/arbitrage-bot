@@ -12,3 +12,5 @@ uniswap-sdk-core = { workspace = true }
 eyre = { workspace = true }
 tokio = { workspace = true }
 tokio-scoped = "0.2.0"
+
+tokens.workspace = true
