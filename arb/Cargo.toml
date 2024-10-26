@@ -14,3 +14,4 @@ alloy-sol-types = { workspace = true }
 tokio = { workspace = true }
 
 tokens.workspace = true
+clap = { version = "4.5.20", features = ["derive"] }
