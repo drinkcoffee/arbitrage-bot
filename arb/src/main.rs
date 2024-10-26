@@ -1,13 +1,14 @@
 use alloy::{
-    primitives::{address},
-    providers::{ProviderBuilder},
+    primitives::address,
+    providers::ProviderBuilder,
 };
 
 use eyre::Result;
 
-use tokens::erc20::{Erc20};
+use tokens::erc20::Erc20;
 
 
+#[tokio::main]
 async fn main() -> Result<()> {
     println!("Arb");
 
@@ -22,7 +23,11 @@ async fn main() -> Result<()> {
 
 
     let tok0_contract = Erc20::new(tok0_address, &provider).await?;
-    let tok0_symbol = tok0_contract.symbol();
+    let tok0_symbol_result = tok0_contract.symbol().await;
+    let tok0_symbol = match tok0_symbol_result {
+        Ok(res) => res,
+        Err(error) => panic!("Problem fetching ERC20 symbol: {error:?}"),
+    };
 
     println!(" Token0: {}, {}", tok0_symbol, tok0_address);
 

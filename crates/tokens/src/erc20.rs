@@ -8,6 +8,8 @@ use eyre::Result;
 
 use alloy::transports::Transport;
 
+use crate::erc20::IERC20::IERC20Instance;
+
 
 // ERC 20 contract specifying return value names
 sol! {
@@ -27,12 +29,16 @@ sol! {
 
 }
 
-pub struct Erc20 {
-    pub token_contract: IERC20,
+pub struct Erc20<T, P> {
+    pub token_contract: IERC20Instance<T, P>,
 }
 
-impl Erc20 {
-    pub async fn new<T, P>(
+impl<T, P> Erc20<T, P> where 
+    T: Transport + Clone,
+    P: Provider<T> + Clone,
+{
+//    pub async fn new<T, P>(
+    pub async fn new(
         token_address: Address,
         provider: P,
     ) -> Result<Self>
@@ -40,7 +46,11 @@ impl Erc20 {
         T: Transport + Clone,
         P: Provider<T> + Clone,
     {
-        self.token_contract = IERC20::new(token_address, &provider);
+        let token_contract = IERC20::new(token_address, provider);
+        let tok0_symbol = token_contract.symbol().call().await?.sym;
+        println!("Sym: {}", tok0_symbol);
+
+        Ok(Self{token_contract})
     }
 
     pub async fn symbol(&self) -> Result<String> {
