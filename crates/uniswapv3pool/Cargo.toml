@@ -1,5 +1,5 @@
 [package]
-name = "rb"
+name = "uniswapv3pool"
 version = "0.1.0"
 edition = "2021"
 
@@ -12,7 +12,3 @@ alloy = { workspace = true }
 alloy-primitives = { workspace = true }
 alloy-sol-types = { workspace = true }
 tokio = { workspace = true }
-
-tokens.workspace = true
-uniswapv3pool.workspace = true
-clap = { version = "4.5.20", features = ["derive"] }
