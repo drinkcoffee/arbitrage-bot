@@ -1,11 +1,23 @@
 use alloy::{primitives::address, providers::ProviderBuilder};
 
+use clap::{Args, Subcommand};
 use eyre::Result;
 
 use uniswapv3pool::univ3contract::UniswapV3PoolContract;
 
+#[derive(Debug, Args)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct PoolArgs {
+    #[command(subcommand)]
+    pub command: Option<PoolCommands>,
+}
 
-pub async fn pool_tick_spacing_command() -> Result<()> {
+#[derive(Debug, Subcommand)]
+pub enum PoolCommands {
+    TickSpacing,
+}
+
+pub async fn pool_tick_spacing() -> Result<()> {
     println!("Arb");
 
     // Input that will be supplied - maybe via environment.
