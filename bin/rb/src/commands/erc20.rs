@@ -1,11 +1,23 @@
 use alloy::{primitives::address, providers::ProviderBuilder};
 
+use clap::{Args, Subcommand};
 use eyre::Result;
 
 use tokens::erc20::Erc20;
 
+#[derive(Debug, Args)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct Erc20Args {
+    #[command(subcommand)]
+    pub command: Option<Erc20Commands>,
+}
 
-pub async fn erc20_symbol_command() -> Result<()> {
+#[derive(Debug, Subcommand)]
+pub enum Erc20Commands {
+    Symbol,
+}
+
+pub async fn erc20_symbol() -> Result<()> {
     println!("Arb");
 
     // Input that will be supplied - maybe via environment.
