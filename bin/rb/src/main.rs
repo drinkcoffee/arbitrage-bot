@@ -1,7 +1,12 @@
 use clap::{Parser, Subcommand};
 
 mod commands;
-use commands::{erc20_symbol, pool_tick_spacing, Erc20Args, Erc20Commands, PoolArgs, PoolCommands};
+use commands::{
+    erc20_symbol, 
+    pool_tick_spacing, 
+    pool_current_tick_command, 
+    pool_tick_dump_command,
+    Erc20Args, Erc20Commands, PoolArgs, PoolCommands};
 
 #[derive(Debug, Parser)]
 #[command(name = "rb")]
@@ -28,6 +33,8 @@ async fn main() -> eyre::Result<()> {
         },
         Commands::Pool(args) => match args.command {
             Some(PoolCommands::TickSpacing) => pool_tick_spacing().await,
+            Some(PoolCommands::CurrentTick) => pool_current_tick_command().await,
+            Some(PoolCommands::Dump) => pool_tick_dump_command().await,
             None => unreachable!(),
         },
     }
