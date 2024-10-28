@@ -199,4 +199,10 @@ impl<T, P> UniswapV3PoolContract<T, P> where
         Ok(spacing)
     }
 
+    pub async fn current_tick(&self) -> Result<i64> {
+        let tick = self.pool_contract.slot0().call().await?.tick;
+        let tick = tick.as_i64();
+        Ok(tick)
+    }
+
 }
