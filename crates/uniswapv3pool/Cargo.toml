@@ -12,3 +12,5 @@ alloy = { workspace = true }
 alloy-primitives = { workspace = true }
 alloy-sol-types = { workspace = true }
 tokio = { workspace = true }
+
+lib = { path = "../../crates/lib" }
