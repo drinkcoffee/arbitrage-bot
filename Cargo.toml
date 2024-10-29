@@ -7,7 +7,7 @@ members = [
     "check",
     "bin/rb",
     "crates/tokens",
-    "crates/uniswapv3pool",
+    "crates/uniswapv3pool", "crates/lib",
 ]
 
 [workspace.dependencies]
