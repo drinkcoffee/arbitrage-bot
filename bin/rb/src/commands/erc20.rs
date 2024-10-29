@@ -10,7 +10,7 @@ use lib::prelude::*;
 #[command(args_conflicts_with_subcommands = true)]
 pub struct Erc20Args {
     #[command(subcommand)]
-    pub command: Option<Erc20Commands>,
+    pub command: Erc20Commands,
 }
 
 #[derive(Debug, Subcommand)]

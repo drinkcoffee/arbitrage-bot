@@ -3,8 +3,8 @@ use clap::{Parser, Subcommand};
 
 mod commands;
 use commands::{
-    erc20_symbol, pool_current_tick_command, pool_tick_dump_command, pool_tick_info_command,
-    pool_tick_spacing, Erc20Args, Erc20Commands, PoolArgs, PoolCommands,
+    chain_id, erc20_symbol, finalized, latest, pool_current_tick, pool_tick_dump, pool_tick_info,
+    pool_tick_spacing, ChainArgs, Erc20Args, Erc20Commands, PoolArgs, PoolCommands,
 };
 use lib::prelude::*;
 
@@ -37,6 +37,7 @@ impl Cli {
 enum Commands {
     Erc20(Erc20Args),
     Pool(PoolArgs),
+    Chain(ChainArgs),
 }
 
 #[tokio::main]
@@ -44,15 +45,18 @@ async fn main() -> eyre::Result<()> {
     let cli = Cli::parse();
     match cli.into_command() {
         (Commands::Erc20(args), provider) => match args.command {
-            Some(Erc20Commands::Symbol(args)) => erc20_symbol(args, provider).await,
-            None => unreachable!(),
+            Erc20Commands::Symbol(args) => erc20_symbol(args, provider).await,
         },
         (Commands::Pool(args), _) => match args.command {
-            Some(PoolCommands::TickSpacing) => pool_tick_spacing().await,
-            Some(PoolCommands::CurrentTick) => pool_current_tick_command().await,
-            Some(PoolCommands::Dump) => pool_tick_dump_command().await,
-            Some(PoolCommands::Info) => pool_tick_info_command().await,
-            None => unreachable!(),
+            PoolCommands::TickSpacing => pool_tick_spacing().await,
+            PoolCommands::CurrentTick => pool_current_tick().await,
+            PoolCommands::Dump => pool_tick_dump().await,
+            PoolCommands::Info => pool_tick_info().await,
+        },
+        (Commands::Chain(args), provider) => match args.command {
+            commands::ChainCommands::ID => chain_id(provider).await,
+            commands::ChainCommands::Latest => latest(provider).await,
+            commands::ChainCommands::Finalized => finalized(provider).await,
         },
     }
 }
