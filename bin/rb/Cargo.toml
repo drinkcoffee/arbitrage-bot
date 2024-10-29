@@ -15,4 +15,6 @@ tokio = { workspace = true }
 
 tokens.workspace = true
 uniswapv3pool.workspace = true
-clap = { version = "4.5.20", features = ["derive"] }
+clap = { version = "4.5.20", features = ["derive", "env"] }
+
+lib = { path = "../../crates/lib" }
