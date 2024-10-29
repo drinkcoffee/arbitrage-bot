@@ -7,7 +7,7 @@ use eyre::Result;
 
 use crate::erc20::IERC20::IERC20Instance;
 
-use lib::{RootProvider, Transport};
+use lib::prelude::*;
 
 // ERC 20 contract specifying return value names
 sol! {

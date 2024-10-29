@@ -1,6 +1,4 @@
-pub use prelude::{Provider, RootProvider, Transport};
-
-mod prelude {
+pub mod prelude {
     use alloy::{
         providers::RootProvider as AlloyRootProvider,
         transports::http::{Client, Http},

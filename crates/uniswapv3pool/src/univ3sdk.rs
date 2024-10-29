@@ -12,7 +12,7 @@ use uniswap_v3_sdk::{
 
 use eyre::Result;
 
-use lib::RootProvider;
+use lib::prelude::*;
 
 pub struct UniswapV3PoolSdk {
     pub pool: Pool,

@@ -5,7 +5,7 @@ use eyre::Result;
 
 use tokens::erc20::Erc20;
 
-use lib::RootProvider;
+use lib::prelude::*;
 
 #[derive(Debug, Args)]
 #[command(args_conflicts_with_subcommands = true)]

@@ -6,7 +6,7 @@ use commands::{
     erc20_symbol, pool_current_tick_command, pool_tick_dump_command, pool_tick_info_command,
     pool_tick_spacing, Erc20Args, Erc20Commands, PoolArgs, PoolCommands,
 };
-use lib::RootProvider;
+use lib::prelude::*;
 
 #[derive(Debug, Parser)]
 #[command(name = "rb")]

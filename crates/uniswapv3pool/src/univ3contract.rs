@@ -5,7 +5,7 @@ use eyre::Result;
 
 use crate::univ3contract::IUniswapV3Pool::IUniswapV3PoolInstance;
 
-use lib::{RootProvider, Transport};
+use lib::prelude::*;
 
 // Uniswap V3 Pool from: https://github.com/Uniswap/v3-core/tree/v1.0.0/contracts/interfaces
 sol! {
