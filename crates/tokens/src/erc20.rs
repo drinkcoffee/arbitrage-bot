@@ -7,6 +7,8 @@ use eyre::Result;
 
 use crate::erc20::IERC20::IERC20Instance;
 
+use lib::prelude::*;
+
 // ERC 20 contract specifying return value names
 sol! {
     #[sol(rpc)]
@@ -26,11 +28,11 @@ sol! {
 }
 
 pub struct Erc20 {
-    pub token_contract: IERC20Instance<lib::Transport, lib::Provider>,
+    pub token_contract: IERC20Instance<Transport, RootProvider>,
 }
 
 impl Erc20 {
-    pub async fn new(token_address: Address, provider: lib::Provider) -> Result<Self> {
+    pub async fn new(token_address: Address, provider: RootProvider) -> Result<Self> {
         let token_contract = IERC20::new(token_address, provider);
         let tok0_symbol = token_contract.symbol().call().await?.sym;
         println!("Sym: {}", tok0_symbol);

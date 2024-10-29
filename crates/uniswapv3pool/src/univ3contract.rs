@@ -5,6 +5,8 @@ use eyre::Result;
 
 use crate::univ3contract::IUniswapV3Pool::IUniswapV3PoolInstance;
 
+use lib::prelude::*;
+
 // Uniswap V3 Pool from: https://github.com/Uniswap/v3-core/tree/v1.0.0/contracts/interfaces
 sol! {
     #[allow(missing_docs)]
@@ -161,11 +163,11 @@ sol! {
 }
 
 pub struct UniswapV3PoolContract {
-    pub pool_contract: IUniswapV3PoolInstance<lib::Transport, lib::Provider>,
+    pub pool_contract: IUniswapV3PoolInstance<Transport, RootProvider>,
 }
 
 impl UniswapV3PoolContract {
-    pub async fn new(token_address: Address, provider: lib::Provider) -> Result<Self> {
+    pub async fn new(token_address: Address, provider: RootProvider) -> Result<Self> {
         let pool_contract = IUniswapV3Pool::new(token_address, provider);
         Ok(Self { pool_contract })
     }

@@ -5,6 +5,8 @@ use eyre::Result;
 
 use tokens::erc20::Erc20;
 
+use lib::prelude::*;
+
 #[derive(Debug, Args)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct Erc20Args {
@@ -17,7 +19,7 @@ pub enum Erc20Commands {
     Symbol,
 }
 
-pub async fn erc20_symbol(provider: lib::Provider) -> Result<()> {
+pub async fn erc20_symbol(provider: RootProvider) -> Result<()> {
     println!("Arb");
 
     let tok0_address = address!("52A6c53869Ce09a731CD772f245b97A4401d3348");

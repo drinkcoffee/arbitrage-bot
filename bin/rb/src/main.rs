@@ -3,10 +3,10 @@ use clap::{Parser, Subcommand};
 
 mod commands;
 use commands::{
-    erc20_symbol, pool_current_tick_command, pool_tick_dump_command, pool_tick_info_command, pool_tick_spacing, Erc20Args,
-    Erc20Commands, PoolArgs, PoolCommands,
+    erc20_symbol, pool_current_tick_command, pool_tick_dump_command, pool_tick_info_command,
+    pool_tick_spacing, Erc20Args, Erc20Commands, PoolArgs, PoolCommands,
 };
-use lib::Provider;
+use lib::prelude::*;
 
 #[derive(Debug, Parser)]
 #[command(name = "rb")]
@@ -28,7 +28,7 @@ struct Cli {
 }
 
 impl Cli {
-    fn into_command(self) -> (Commands, Provider) {
+    fn into_command(self) -> (Commands, RootProvider) {
         (self.command, ProviderBuilder::new().on_http(self.rpc))
     }
 }
