@@ -1,45 +1,73 @@
 use alloy::{
     eips::BlockId, 
-    primitives::Address,
+    primitives::{Address, ChainId},
     providers::Provider,
     transports::Transport,
 };
 
 
-use uniswap_v3_sdk::extensions::EphemeralTickDataProvider;
-use uniswap_v3_sdk::entities::TickDataProvider;
+//use uniswap_sdk_core::prelude::ToPrimitive;
+use uniswap_v3_sdk::{
+    extensions::EphemeralTickDataProvider, 
+    utils::compute_pool_address,
+    entities::TickDataProvider,
+    prelude::{FeeAmount, Pool},
+};
+
 
 use eyre::Result;
 
 
 
 pub struct UniswapV3PoolSdk {
+    pub pool: Pool,
     pub tick_data_provider: EphemeralTickDataProvider,
 }
 
 impl UniswapV3PoolSdk {
     pub async fn new<T, P>(
-        pool_address: Address,
-        provider: P,
-        block_number: Option<BlockId>,
+        pool: Pool,
+        tick_data_provider: EphemeralTickDataProvider,
     ) -> Result<Self>
     where
         T: Transport + Clone,
         P: Provider<T> + Clone,
     {
+        Ok(Self{pool, tick_data_provider})
+    }
+
+    pub async fn from_pool_key<T, P> (
+        chain_id: ChainId,
+        factory: Address,
+        token_a: Address,
+        token_b: Address,
+        fee: FeeAmount,
+        provider: P,
+        block_id: Option<BlockId>,
+    ) -> Result<Self>
+    where
+        T: Transport + Clone,
+        P: Provider<T> + Clone,
+    {
+        let pool_address= compute_pool_address(factory, token_a, token_b, fee, None, None);
+
         let tick_data_provider = 
             EphemeralTickDataProvider::new(
             pool_address,
-            provider,
+            &provider,
             None,
             None,
-            block_number,
+            block_id,
         )
         .await?;
-        Ok(Self{tick_data_provider})
+
+        let pool = Pool::from_pool_key(chain_id, factory, token_a, token_b, fee, provider, block_id).await?;
+        Self::new::<T, P>(pool, tick_data_provider).await
     }
 
 
+
+ 
     // Some temporary code so that we can see what information is available.
     pub async fn dump(&self)  -> Result<i64> {
         println!("Tick lower: {}", self.tick_data_provider.tick_lower);
@@ -81,6 +109,7 @@ impl UniswapV3PoolSdk {
         let hack = lower.as_i64();
         Ok(hack)
     }
+
 
 
 }
