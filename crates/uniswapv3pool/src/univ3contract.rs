@@ -1,19 +1,14 @@
-use alloy::{
-    primitives::{Address},
-    providers::Provider,
-    sol,
-};
+use alloy::{providers::Provider, sol};
 
+use alloy_primitives::Address;
 use eyre::Result;
 
 use alloy::transports::Transport;
 
 use crate::univ3contract::IUniswapV3Pool::IUniswapV3PoolInstance;
 
-
-
 // Uniswap V3 Pool from: https://github.com/Uniswap/v3-core/tree/v1.0.0/contracts/interfaces
-sol!{
+sol! {
     #[allow(missing_docs)]
     #[sol(rpc)]
     interface IUniswapV3Pool {
@@ -171,21 +166,19 @@ pub struct UniswapV3PoolContract<T, P> {
     pub pool_contract: IUniswapV3PoolInstance<T, P>,
 }
 
-impl<T, P> UniswapV3PoolContract<T, P> where 
+impl<T, P> UniswapV3PoolContract<T, P>
+where
     T: Transport + Clone,
     P: Provider<T> + Clone,
 {
-//    pub async fn new<T, P>(
-    pub async fn new(
-        token_address: Address,
-        provider: P,
-    ) -> Result<Self>
+    //    pub async fn new<T, P>(
+    pub async fn new(token_address: Address, provider: P) -> Result<Self>
     where
         T: Transport + Clone,
         P: Provider<T> + Clone,
     {
         let pool_contract = IUniswapV3Pool::new(token_address, provider);
-        Ok(Self{pool_contract})
+        Ok(Self { pool_contract })
     }
 
     pub async fn address(&self) -> Result<&Address> {
@@ -204,5 +197,4 @@ impl<T, P> UniswapV3PoolContract<T, P> where
         let tick = tick.as_i64();
         Ok(tick)
     }
-
 }

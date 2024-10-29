@@ -3,7 +3,6 @@ use alloy::primitives::address;
 use clap::{Args, Subcommand};
 use eyre::Result;
 
-use lib::Provider;
 use tokens::erc20::Erc20;
 
 #[derive(Debug, Args)]
@@ -18,12 +17,12 @@ pub enum Erc20Commands {
     Symbol,
 }
 
-pub async fn erc20_symbol(_args: Erc20Args, provider: Provider) -> Result<()> {
+pub async fn erc20_symbol(provider: lib::Provider) -> Result<()> {
     println!("Arb");
 
     let tok0_address = address!("52A6c53869Ce09a731CD772f245b97A4401d3348");
 
-    let tok0_contract = Erc20::new(tok0_address, &provider).await?;
+    let tok0_contract = Erc20::new(tok0_address, provider).await?;
     let tok0_symbol_result = tok0_contract.symbol().await;
     let tok0_symbol = match tok0_symbol_result {
         Ok(res) => res,

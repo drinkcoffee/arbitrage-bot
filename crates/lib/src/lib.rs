@@ -3,4 +3,5 @@ use alloy::{
     transports::http::{Client, Http},
 };
 
-pub type Provider = RootProvider<Http<Client>>;
+pub type Transport = Http<Client>;
+pub type Provider = RootProvider<Transport>;

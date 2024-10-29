@@ -1,19 +1,15 @@
 use alloy::{
     primitives::{Address, U256},
-    providers::Provider,
     sol,
 };
 
 use eyre::Result;
 
-use alloy::transports::Transport;
-
 use crate::erc20::IERC20::IERC20Instance;
-
 
 // ERC 20 contract specifying return value names
 sol! {
-    #[sol(rpc)]    
+    #[sol(rpc)]
     interface IERC20 {
         function totalSupply() external view returns (uint256 supply);
         function balanceOf(address account) external view returns (uint256 balance);
@@ -29,28 +25,17 @@ sol! {
 
 }
 
-pub struct Erc20<T, P> {
-    pub token_contract: IERC20Instance<T, P>,
+pub struct Erc20 {
+    pub token_contract: IERC20Instance<lib::Transport, lib::Provider>,
 }
 
-impl<T, P> Erc20<T, P> where 
-    T: Transport + Clone,
-    P: Provider<T> + Clone,
-{
-//    pub async fn new<T, P>(
-    pub async fn new(
-        token_address: Address,
-        provider: P,
-    ) -> Result<Self>
-    where
-        T: Transport + Clone,
-        P: Provider<T> + Clone,
-    {
+impl Erc20 {
+    pub async fn new(token_address: Address, provider: lib::Provider) -> Result<Self> {
         let token_contract = IERC20::new(token_address, provider);
         let tok0_symbol = token_contract.symbol().call().await?.sym;
         println!("Sym: {}", tok0_symbol);
 
-        Ok(Self{token_contract})
+        Ok(Self { token_contract })
     }
 
     pub async fn address(&self) -> Result<&Address> {
@@ -67,5 +52,4 @@ impl<T, P> Erc20<T, P> where
         let res = self.token_contract.totalSupply().call().await?.supply;
         Ok(res)
     }
-
 }
