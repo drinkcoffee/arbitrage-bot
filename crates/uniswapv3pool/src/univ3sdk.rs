@@ -12,6 +12,8 @@ use uniswap_v3_sdk::{
 
 use eyre::Result;
 
+use lib::RootProvider;
+
 pub struct UniswapV3PoolSdk {
     pub pool: Pool,
     pub tick_data_provider: EphemeralTickDataProvider,
@@ -31,7 +33,7 @@ impl UniswapV3PoolSdk {
         token_a: Address,
         token_b: Address,
         fee: FeeAmount,
-        provider: lib::Provider,
+        provider: RootProvider,
         block_id: Option<BlockId>,
     ) -> Result<Self> {
         let pool_address = compute_pool_address(factory, token_a, token_b, fee, None, None);
