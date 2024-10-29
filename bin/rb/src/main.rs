@@ -29,10 +29,7 @@ struct Cli {
 
 impl Cli {
     fn into_command(self) -> (Commands, Provider) {
-        (
-            self.command,
-            ProviderBuilder::new().on_http(self.rpc.clone()),
-        )
+        (self.command, ProviderBuilder::new().on_http(self.rpc))
     }
 }
 
