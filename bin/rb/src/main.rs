@@ -3,8 +3,8 @@ use clap::{Parser, Subcommand};
 
 mod commands;
 use commands::{
-    erc20_symbol, pool_current_tick_command, pool_tick_dump_command, pool_tick_info_command,
-    pool_tick_spacing, Erc20Args, Erc20Commands, PoolArgs, PoolCommands,
+    erc20_symbol, id, pool_current_tick_command, pool_tick_dump_command, pool_tick_info_command,
+    pool_tick_spacing, ChainArgs, Erc20Args, Erc20Commands, PoolArgs, PoolCommands,
 };
 use lib::prelude::*;
 
@@ -37,6 +37,7 @@ impl Cli {
 enum Commands {
     Erc20(Erc20Args),
     Pool(PoolArgs),
+    Chain(ChainArgs),
 }
 
 #[tokio::main]
@@ -53,6 +54,11 @@ async fn main() -> eyre::Result<()> {
             Some(PoolCommands::Dump) => pool_tick_dump_command().await,
             Some(PoolCommands::Info) => pool_tick_info_command().await,
             None => unreachable!(),
+        },
+        (Commands::Chain(args), provider) => match args.command {
+            commands::ChainCommands::ID => id(provider).await,
+            commands::ChainCommands::Latest => todo!(),
+            commands::ChainCommands::Finalized => todo!(),
         },
     }
 }
