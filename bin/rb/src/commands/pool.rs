@@ -46,7 +46,7 @@ pub async fn pool_tick_spacing() -> Result<()> {
     Ok(())
 }
 
-pub async fn pool_current_tick_command() -> Result<()> {
+pub async fn pool_current_tick() -> Result<()> {
     println!("Arb");
 
     // Input that will be supplied - maybe via environment.
@@ -69,7 +69,7 @@ pub async fn pool_current_tick_command() -> Result<()> {
     Ok(())
 }
 
-pub async fn pool_tick_dump_command() -> Result<()> {
+pub async fn pool_tick_dump() -> Result<()> {
     println!("Arb");
 
     // Input that will be supplied - maybe via environment.
@@ -105,7 +105,7 @@ pub async fn pool_tick_dump_command() -> Result<()> {
     Ok(())
 }
 
-pub async fn pool_tick_info_command() -> Result<()> {
+pub async fn pool_tick_info() -> Result<()> {
     println!("Arb");
 
     // Input that will be supplied - maybe via environment.
