@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand};
 
 mod commands;
 use commands::{
-    erc20_symbol, pool_current_tick_command, pool_tick_dump_command, pool_tick_spacing, Erc20Args,
+    erc20_symbol, pool_current_tick_command, pool_tick_dump_command, pool_tick_info_command, pool_tick_spacing, Erc20Args,
     Erc20Commands, PoolArgs, PoolCommands,
 };
 use lib::Provider;
@@ -51,6 +51,7 @@ async fn main() -> eyre::Result<()> {
             Some(PoolCommands::TickSpacing) => pool_tick_spacing().await,
             Some(PoolCommands::CurrentTick) => pool_current_tick_command().await,
             Some(PoolCommands::Dump) => pool_tick_dump_command().await,
+            Some(PoolCommands::Info) => pool_tick_info_command().await,
             None => unreachable!(),
         },
     }

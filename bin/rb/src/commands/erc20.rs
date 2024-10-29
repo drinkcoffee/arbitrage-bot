@@ -18,7 +18,7 @@ pub enum Erc20Commands {
     Symbol,
 }
 
-pub async fn erc20_symbol(args: Erc20Args, provider: Provider) -> Result<()> {
+pub async fn erc20_symbol(_args: Erc20Args, provider: Provider) -> Result<()> {
     println!("Arb");
 
     let tok0_address = address!("52A6c53869Ce09a731CD772f245b97A4401d3348");
