@@ -1,8 +1,9 @@
-use alloy::{primitives::address, providers::ProviderBuilder};
+use alloy::primitives::address;
 
 use clap::{Args, Subcommand};
 use eyre::Result;
 
+use lib::Provider;
 use tokens::erc20::Erc20;
 
 #[derive(Debug, Args)]
@@ -17,17 +18,10 @@ pub enum Erc20Commands {
     Symbol,
 }
 
-pub async fn erc20_symbol() -> Result<()> {
+pub async fn erc20_symbol(args: Erc20Args, provider: Provider) -> Result<()> {
     println!("Arb");
 
-    // Input that will be supplied - maybe via environment.
-    let url = "https://rpc.immutable.com";
-
     let tok0_address = address!("52A6c53869Ce09a731CD772f245b97A4401d3348");
-    //    let tok1_address = address!("3A0C2Ba54D6CBd3121F01b96dFd20e99D1696C9D");
-
-    let rpc_url = url.parse()?;
-    let provider = ProviderBuilder::new().on_http(rpc_url);
 
     let tok0_contract = Erc20::new(tok0_address, &provider).await?;
     let tok0_symbol_result = tok0_contract.symbol().await;

@@ -6,7 +6,6 @@ use eyre::Result;
 use uniswapv3pool::univ3contract::UniswapV3PoolContract;
 use uniswapv3pool::univ3sdk::UniswapV3PoolSdk;
 
-
 #[derive(Debug, Args)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct PoolArgs {
@@ -66,7 +65,6 @@ pub async fn pool_current_tick_command() -> Result<()> {
 
     Ok(())
 }
-
 
 pub async fn pool_tick_dump_command() -> Result<()> {
     println!("Arb");
