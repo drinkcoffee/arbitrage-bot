@@ -6,13 +6,14 @@ use alloy::{
 };
 
 
-//use uniswap_sdk_core::prelude::ToPrimitive;
+//use uniswap_sdk_core::prelude::{CurrencyAmount, FractionBase};
 use uniswap_v3_sdk::{
-    extensions::EphemeralTickDataProvider, 
-    utils::compute_pool_address,
-    entities::TickDataProvider,
-    prelude::{FeeAmount, Pool},
+    extensions::{EphemeralTickDataProvider, /* EphemeralTickMapDataProvider */}, 
+    prelude::{FeeAmount, Pool, TickDataProvider}, 
+    utils::compute_pool_address
 };
+
+
 
 
 use eyre::Result;
@@ -20,12 +21,14 @@ use eyre::Result;
 
 
 pub struct UniswapV3PoolSdk {
+//    pub pool: Pool<EphemeralTickMapDataProvider>,
     pub pool: Pool,
     pub tick_data_provider: EphemeralTickDataProvider,
 }
 
 impl UniswapV3PoolSdk {
     pub async fn new<T, P>(
+//        pool: Pool<EphemeralTickMapDataProvider>,
         pool: Pool,
         tick_data_provider: EphemeralTickDataProvider,
     ) -> Result<Self>
@@ -51,6 +54,7 @@ impl UniswapV3PoolSdk {
     {
         let pool_address= compute_pool_address(factory, token_a, token_b, fee, None, None);
 
+
         let tick_data_provider = 
             EphemeralTickDataProvider::new(
             pool_address,
@@ -61,8 +65,42 @@ impl UniswapV3PoolSdk {
         )
         .await?;
 
-        let pool = Pool::from_pool_key(chain_id, factory, token_a, token_b, fee, provider, block_id).await?;
-        Self::new::<T, P>(pool, tick_data_provider).await
+        // let pool = 
+        //     Pool::from_pool_key_with_tick_data_provider(
+        //         chain_id, factory, token_a, token_b, fee, provider, block_id).await?;
+        let pool = 
+            Pool::from_pool_key(
+                chain_id, factory, token_a, token_b, fee, provider, block_id).await?;
+            Self::new::<T, P>(pool, tick_data_provider).await
+    }
+
+    pub async fn info(&self) -> Result<i64> {
+        println!("Current tick: {}", self.pool.tick_current);
+        println!("Tick Spacing: {}", self.pool.tick_spacing());
+        println!("Liquidity at current tick: {}", self.pool.liquidity);
+        println!("Chain Id: {}", self.pool.chain_id());
+        println!("Fee: Not sure how to use self.pool.fee"/* , self.pool.fee */);
+        println!("Token 0 symbol: {}", self.pool.token0.symbol.as_ref().unwrap());
+        println!("Token 1 symbol: {}", self.pool.token1.symbol.as_ref().unwrap());
+
+        println!("get_input_amount fails without a tick data map provider");
+        // let amount_to_swap = &CurrencyAmount::from_raw_amount(
+        //     &(self.pool.token0), 98).unwrap();
+
+        // let (input_amount, _) = self.pool.get_input_amount(
+        //     amount_to_swap,
+        //     None,
+        // )
+        // .unwrap();
+        // println!("get_input_amount: 98 {} gives {} {}, which is hopefully also {}", 
+        //     self.pool.token0.symbol.as_ref().unwrap(),
+        //     input_amount.quotient(),
+        //     input_amount.currency.symbol.as_ref().unwrap(),
+        //     self.pool.token1.symbol.as_ref().unwrap(),
+        // );
+
+        let hack = 0;
+        Ok(hack)
     }
 
 
@@ -70,6 +108,14 @@ impl UniswapV3PoolSdk {
  
     // Some temporary code so that we can see what information is available.
     pub async fn dump(&self)  -> Result<i64> {
+        // let tick_map_data_provider = &self.pool.tick_data_provider;
+        // println!("Tick lower: {}", tick_map_data_provider.tick_lower);
+        // println!("Tick upper: {}", tick_map_data_provider.tick_upper);
+        // println!("Tick spacing: {}", tick_map_data_provider.tick_spacing);
+        // println!("Pool address: {}", tick_map_data_provider.pool);
+        // println!("Tick map size: {}", tick_map_data_provider.bitmap.len());
+
+       
         println!("Tick lower: {}", self.tick_data_provider.tick_lower);
         println!("Tick upper: {}", self.tick_data_provider.tick_upper);
         println!("Tick spacing: {}", self.tick_data_provider.tick_spacing);
