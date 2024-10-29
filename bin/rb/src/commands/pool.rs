@@ -34,7 +34,7 @@ pub async fn pool_tick_spacing() -> Result<()> {
     let rpc_url = url.parse()?;
     let provider = ProviderBuilder::new().on_http(rpc_url);
 
-    let pool_contract = UniswapV3PoolContract::new(pool_address, &provider).await?;
+    let pool_contract = UniswapV3PoolContract::new(pool_address, provider).await?;
     let result = pool_contract.tick_spacing().await;
     let tick_spacing = match result {
         Ok(res) => res,
@@ -57,7 +57,7 @@ pub async fn pool_current_tick_command() -> Result<()> {
     let rpc_url = url.parse()?;
     let provider = ProviderBuilder::new().on_http(rpc_url);
 
-    let pool_contract = UniswapV3PoolContract::new(pool_address, &provider).await?;
+    let pool_contract = UniswapV3PoolContract::new(pool_address, provider).await?;
     let result = pool_contract.current_tick().await;
     let current_tick = match result {
         Ok(res) => res,
@@ -81,18 +81,19 @@ pub async fn pool_tick_dump_command() -> Result<()> {
     let tok0_address = address!("52A6c53869Ce09a731CD772f245b97A4401d3348");
     let tok1_address = address!("3A0C2Ba54D6CBd3121F01b96dFd20e99D1696C9D");
 
-
     let rpc_url = url.parse()?;
     let provider = ProviderBuilder::new().on_http(rpc_url);
 
-    let pool = UniswapV3PoolSdk::from_pool_key (
-        13371, 
+    let pool = UniswapV3PoolSdk::from_pool_key(
+        13371,
         factory_address,
         tok0_address,
         tok1_address,
         FeeAmount::MEDIUM,
-        &provider,
-        None).await?;
+        provider,
+        None,
+    )
+    .await?;
     let result = pool.dump().await;
     let ignore = match result {
         Ok(res) => res,
@@ -103,7 +104,6 @@ pub async fn pool_tick_dump_command() -> Result<()> {
 
     Ok(())
 }
-
 
 pub async fn pool_tick_info_command() -> Result<()> {
     println!("Arb");
@@ -117,18 +117,19 @@ pub async fn pool_tick_info_command() -> Result<()> {
     let tok0_address = address!("52A6c53869Ce09a731CD772f245b97A4401d3348");
     let tok1_address = address!("3A0C2Ba54D6CBd3121F01b96dFd20e99D1696C9D");
 
-
     let rpc_url = url.parse()?;
     let provider = ProviderBuilder::new().on_http(rpc_url);
 
-    let pool = UniswapV3PoolSdk::from_pool_key (
-        13371, 
+    let pool = UniswapV3PoolSdk::from_pool_key(
+        13371,
         factory_address,
         tok0_address,
         tok1_address,
         FeeAmount::MEDIUM,
-        &provider,
-        None).await?;
+        provider,
+        None,
+    )
+    .await?;
     let result = pool.info().await;
     let ignore = match result {
         Ok(res) => res,

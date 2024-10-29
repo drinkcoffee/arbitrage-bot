@@ -1,77 +1,51 @@
 use alloy::{
-    eips::BlockId, 
+    eips::BlockId,
     primitives::{Address, ChainId},
-    providers::Provider,
-    transports::Transport,
 };
-
 
 //use uniswap_sdk_core::prelude::{CurrencyAmount, FractionBase};
 use uniswap_v3_sdk::{
-    extensions::{EphemeralTickDataProvider, /* EphemeralTickMapDataProvider */}, 
-    prelude::{FeeAmount, Pool, TickDataProvider}, 
-    utils::compute_pool_address
+    extensions::{EphemeralTickDataProvider /* EphemeralTickMapDataProvider */},
+    prelude::{FeeAmount, Pool, TickDataProvider},
+    utils::compute_pool_address,
 };
-
-
-
 
 use eyre::Result;
 
-
-
 pub struct UniswapV3PoolSdk {
-//    pub pool: Pool<EphemeralTickMapDataProvider>,
     pub pool: Pool,
     pub tick_data_provider: EphemeralTickDataProvider,
 }
 
 impl UniswapV3PoolSdk {
-    pub async fn new<T, P>(
-//        pool: Pool<EphemeralTickMapDataProvider>,
-        pool: Pool,
-        tick_data_provider: EphemeralTickDataProvider,
-    ) -> Result<Self>
-    where
-        T: Transport + Clone,
-        P: Provider<T> + Clone,
-    {
-        Ok(Self{pool, tick_data_provider})
+    pub async fn new(pool: Pool, tick_data_provider: EphemeralTickDataProvider) -> Result<Self> {
+        Ok(Self {
+            pool,
+            tick_data_provider,
+        })
     }
 
-    pub async fn from_pool_key<T, P> (
+    pub async fn from_pool_key(
         chain_id: ChainId,
         factory: Address,
         token_a: Address,
         token_b: Address,
         fee: FeeAmount,
-        provider: P,
+        provider: lib::Provider,
         block_id: Option<BlockId>,
-    ) -> Result<Self>
-    where
-        T: Transport + Clone,
-        P: Provider<T> + Clone,
-    {
-        let pool_address= compute_pool_address(factory, token_a, token_b, fee, None, None);
+    ) -> Result<Self> {
+        let pool_address = compute_pool_address(factory, token_a, token_b, fee, None, None);
 
+        let tick_data_provider =
+            EphemeralTickDataProvider::new(pool_address, &provider, None, None, block_id).await?;
 
-        let tick_data_provider = 
-            EphemeralTickDataProvider::new(
-            pool_address,
-            &provider,
-            None,
-            None,
-            block_id,
-        )
-        .await?;
-
-        // let pool = 
+        // let pool =
         //     Pool::from_pool_key_with_tick_data_provider(
         //         chain_id, factory, token_a, token_b, fee, provider, block_id).await?;
-        let pool = 
-            Pool::from_pool_key(
-                chain_id, factory, token_a, token_b, fee, provider, block_id).await?;
-            Self::new::<T, P>(pool, tick_data_provider).await
+        let pool =
+            Pool::from_pool_key(chain_id, factory, token_a, token_b, fee, provider, block_id)
+                .await?;
+        Self::new(pool, tick_data_provider).await
     }
 
     pub async fn info(&self) -> Result<i64> {
@@ -79,9 +53,15 @@ impl UniswapV3PoolSdk {
         println!("Tick Spacing: {}", self.pool.tick_spacing());
         println!("Liquidity at current tick: {}", self.pool.liquidity);
         println!("Chain Id: {}", self.pool.chain_id());
-        println!("Fee: Not sure how to use self.pool.fee"/* , self.pool.fee */);
-        println!("Token 0 symbol: {}", self.pool.token0.symbol.as_ref().unwrap());
-        println!("Token 1 symbol: {}", self.pool.token1.symbol.as_ref().unwrap());
+        println!("Fee: Not sure how to use self.pool.fee" /* , self.pool.fee */);
+        println!(
+            "Token 0 symbol: {}",
+            self.pool.token0.symbol.as_ref().unwrap()
+        );
+        println!(
+            "Token 1 symbol: {}",
+            self.pool.token1.symbol.as_ref().unwrap()
+        );
 
         println!("get_input_amount fails without a tick data map provider");
         // let amount_to_swap = &CurrencyAmount::from_raw_amount(
@@ -92,7 +72,7 @@ impl UniswapV3PoolSdk {
         //     None,
         // )
         // .unwrap();
-        // println!("get_input_amount: 98 {} gives {} {}, which is hopefully also {}", 
+        // println!("get_input_amount: 98 {} gives {} {}, which is hopefully also {}",
         //     self.pool.token0.symbol.as_ref().unwrap(),
         //     input_amount.quotient(),
         //     input_amount.currency.symbol.as_ref().unwrap(),
@@ -103,11 +83,8 @@ impl UniswapV3PoolSdk {
         Ok(hack)
     }
 
-
-
- 
     // Some temporary code so that we can see what information is available.
-    pub async fn dump(&self)  -> Result<i64> {
+    pub async fn dump(&self) -> Result<i64> {
         // let tick_map_data_provider = &self.pool.tick_data_provider;
         // println!("Tick lower: {}", tick_map_data_provider.tick_lower);
         // println!("Tick upper: {}", tick_map_data_provider.tick_upper);
@@ -115,7 +92,6 @@ impl UniswapV3PoolSdk {
         // println!("Pool address: {}", tick_map_data_provider.pool);
         // println!("Tick map size: {}", tick_map_data_provider.bitmap.len());
 
-       
         println!("Tick lower: {}", self.tick_data_provider.tick_lower);
         println!("Tick upper: {}", self.tick_data_provider.tick_upper);
         println!("Tick spacing: {}", self.tick_data_provider.tick_spacing);
@@ -139,15 +115,16 @@ impl UniswapV3PoolSdk {
 
         println!("Tick vector:");
         for tick in self.tick_data_provider.ticks.iter() {
-            println!("Tick: {}, liq gross: {}, liq net: {}", tick.index, tick.liquidity_gross, tick.liquidity_net);
+            println!(
+                "Tick: {}, liq gross: {}, liq net: {}",
+                tick.index, tick.liquidity_gross, tick.liquidity_net
+            );
         }
 
         // Note: no matter whether I pass in upper or lower, this errors with Below smallest tick
-        let (tick_num, initialized) = self.tick_data_provider.next_initialized_tick_within_one_word(
-            upper,
-            true,
-            spacing,
-        )?;
+        let (tick_num, initialized) = self
+            .tick_data_provider
+            .next_initialized_tick_within_one_word(upper, true, spacing)?;
         println!("Next tick initialised: {}", initialized);
         println!("Next tick number: {}", tick_num);
 
@@ -155,7 +132,4 @@ impl UniswapV3PoolSdk {
         let hack = lower.as_i64();
         Ok(hack)
     }
-
-
-
 }
