@@ -44,7 +44,7 @@ async fn main() -> eyre::Result<()> {
     let cli = Cli::parse();
     match cli.into_command() {
         (Commands::Erc20(args), provider) => match args.command {
-            Some(Erc20Commands::Symbol) => erc20_symbol(provider).await,
+            Some(Erc20Commands::Symbol(args)) => erc20_symbol(args, provider).await,
             None => unreachable!(),
         },
         (Commands::Pool(args), _) => match args.command {

@@ -1,5 +1,4 @@
-use alloy::primitives::address;
-
+use alloy_primitives::Address;
 use clap::{Args, Subcommand};
 use eyre::Result;
 
@@ -16,20 +15,19 @@ pub struct Erc20Args {
 
 #[derive(Debug, Subcommand)]
 pub enum Erc20Commands {
-    Symbol,
+    Symbol(Erc20SymbolArgs),
 }
 
-pub async fn erc20_symbol(provider: RootProvider) -> Result<()> {
-    println!("Arb");
+#[derive(Debug, Args)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct Erc20SymbolArgs {
+    pub address: Address,
+}
 
-    let tok0_address = address!("52A6c53869Ce09a731CD772f245b97A4401d3348");
-
+pub async fn erc20_symbol(args: Erc20SymbolArgs, provider: RootProvider) -> Result<()> {
+    let tok0_address = args.address;
     let tok0_contract = Erc20::new(tok0_address, provider).await?;
-    let tok0_symbol_result = tok0_contract.symbol().await;
-    let tok0_symbol = match tok0_symbol_result {
-        Ok(res) => res,
-        Err(error) => panic!("Problem fetching ERC20 symbol: {error:?}"),
-    };
+    let tok0_symbol = tok0_contract.symbol().await?;
 
     println!(" Token0: {}, {}", tok0_symbol, tok0_address);
 
