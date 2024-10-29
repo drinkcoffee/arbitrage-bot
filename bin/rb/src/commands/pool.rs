@@ -12,7 +12,7 @@ use uniswap_v3_sdk::prelude::FeeAmount;
 #[command(args_conflicts_with_subcommands = true)]
 pub struct PoolArgs {
     #[command(subcommand)]
-    pub command: Option<PoolCommands>,
+    pub command: PoolCommands,
 }
 
 #[derive(Debug, Subcommand)]
