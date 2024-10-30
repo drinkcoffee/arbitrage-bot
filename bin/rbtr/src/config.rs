@@ -11,6 +11,7 @@ struct RawConfig {
     token_two: Address,
 }
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct Config {
     provider_one: RootProvider,
