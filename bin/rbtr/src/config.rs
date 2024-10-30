@@ -1,14 +1,14 @@
 use eyre::{Context, Result};
 use lib::prelude::*;
 use serde::Deserialize;
-use std::{fs, path::Path, str::FromStr};
+use std::{fs, path::Path};
 
 #[derive(Deserialize)]
 struct RawConfig {
     url_one: String,
     url_two: String,
-    token_one: String,
-    token_two: String,
+    token_one: Address,
+    token_two: Address,
 }
 
 #[derive(Debug)]
@@ -35,17 +35,11 @@ impl Config {
         let provider_one = ProviderBuilder::new().on_http(url_one);
         let provider_two = ProviderBuilder::new().on_http(url_two);
 
-        // Parse addresses.
-        let token_address_one = Address::from_str(&raw.token_one)
-            .wrap_err(format!("failed to parse address: {}", raw.token_one))?;
-        let token_address_two = Address::from_str(&raw.token_two)
-            .wrap_err(format!("failed to parse address: {}", raw.token_two))?;
-
         Ok(Self {
             provider_one,
             provider_two,
-            token_address_one,
-            token_address_two,
+            token_address_one: raw.token_one,
+            token_address_two: raw.token_two,
         })
     }
 }
