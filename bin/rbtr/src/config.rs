@@ -11,6 +11,7 @@ struct RawConfig {
     token_two: Address,
 }
 
+// TODO: remove allow when this is used
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Config {
