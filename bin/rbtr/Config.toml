@@ -1,0 +1,5 @@
+[config]
+url_one = "one"
+url_two = "two"
+token_one = "three"
+token_two = "four"
