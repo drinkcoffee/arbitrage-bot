@@ -1,4 +1,4 @@
-url_one = "one"
-url_two = "two"
-token_one = "three"
-token_two = "four"
+url_one = "https://rpc.immutable.com"
+url_two = "https://rpc.immutable.com"
+token_one = "0xD67cc11151dBccCC424A16F8963ece3D0539BD61"
+token_two = "0xD67cc11151dBccCC424A16F8963ece3D0539BD61"

@@ -1,11 +1,12 @@
 pub mod prelude {
     use alloy::{
-        primitives::Address,
         providers::RootProvider as AlloyRootProvider,
-        transports::http::{reqwest::Url, Client, Http},
+        transports::http::{Client, Http},
     };
 
     pub type Transport = Http<Client>;
     pub type RootProvider = AlloyRootProvider<Transport>;
+    pub use alloy::primitives::Address;
     pub use alloy::providers::Provider;
+    pub use alloy::transports::http::reqwest::Url;
 }
