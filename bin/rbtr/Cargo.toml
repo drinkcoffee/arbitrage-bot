@@ -6,3 +6,7 @@ edition = "2021"
 [dependencies]
 toml = { workspace = true }
 serde = { workspace = true }
+eyre = { workspace = true }
+alloy = { workspace = true }
+
+lib = { path = "../../crates/lib" }
