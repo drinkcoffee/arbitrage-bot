@@ -1,0 +1,12 @@
+[package]
+name = "rbtr"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+toml = { workspace = true }
+serde = { workspace = true }
+eyre = { workspace = true }
+alloy = { workspace = true }
+
+lib = { path = "../../crates/lib" }

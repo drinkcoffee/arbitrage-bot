@@ -6,5 +6,8 @@ pub mod prelude {
 
     pub type Transport = Http<Client>;
     pub type RootProvider = AlloyRootProvider<Transport>;
+    pub use alloy::primitives::Address;
     pub use alloy::providers::Provider;
+    pub use alloy::providers::ProviderBuilder;
+    pub use alloy::transports::http::reqwest::Url;
 }

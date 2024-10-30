@@ -1,4 +1,3 @@
-use alloy::{providers::ProviderBuilder, transports::http::reqwest::Url};
 use clap::{Parser, Subcommand};
 
 mod commands;
