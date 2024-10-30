@@ -1,0 +1,11 @@
+[package]
+name = "tests"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+tokio.workspace = true
+rand = "0.8.5"
+ethers = "2.0.14"
+lib = { path = "../crates/lib" }
