@@ -1,12 +1,11 @@
-use alloy::{primitives::address, providers::ProviderBuilder};
-
 use clap::{Args, Subcommand};
 use eyre::Result;
 
-use uniswapv3pool::univ3contract::UniswapV3PoolContract;
-use uniswapv3pool::univ3sdk::UniswapV3PoolSdk;
+use lib::prelude::*;
 
 use uniswap_v3_sdk::prelude::FeeAmount;
+use uniswapv3pool::univ3contract::UniswapV3PoolContract;
+use uniswapv3pool::univ3sdk::UniswapV3PoolSdk;
 
 #[derive(Debug, Args)]
 #[command(args_conflicts_with_subcommands = true)]
@@ -17,126 +16,98 @@ pub struct PoolArgs {
 
 #[derive(Debug, Subcommand)]
 pub enum PoolCommands {
-    TickSpacing,
-    CurrentTick,
-    Dump,
-    Info,
+    TickSpacing(TickSpacingArgs),
+    CurrentTick(CurrentTickArgs),
+    Dump(DumpArgs),
+    Info(InfoArgs),
 }
 
-pub async fn pool_tick_spacing() -> Result<()> {
-    println!("Arb");
+#[derive(Debug, Args)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct TickSpacingArgs {
+    pub pool_address: Address,
+}
 
-    // Input that will be supplied - maybe via environment.
-    let url = "https://rpc.immutable.com";
+#[derive(Debug, Args)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct CurrentTickArgs {
+    pub pool_address: Address,
+}
 
-    let pool_address = address!("EE997F15Eaca3012E4825F1AeFE12136216CF3AF");
+#[derive(Debug, Args)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct DumpArgs {
+    pub factory_address: Address,
+    pub token_one_address: Address,
+    pub token_two_address: Address,
+}
 
-    let rpc_url = url.parse()?;
-    let provider = ProviderBuilder::new().on_http(rpc_url);
+#[derive(Debug, Args)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct InfoArgs {
+    pub factory_address: Address,
+    pub token_one_address: Address,
+    pub token_two_address: Address,
+}
 
-    let pool_contract = UniswapV3PoolContract::new(pool_address, provider).await?;
-    let result = pool_contract.tick_spacing().await;
-    let tick_spacing = match result {
-        Ok(res) => res,
-        Err(error) => panic!("Problem fetching Uniswap V3 tick spacing: {error:?}"),
-    };
+pub async fn pool_tick_spacing(args: TickSpacingArgs, provider: RootProvider) -> Result<()> {
+    let pool_contract = UniswapV3PoolContract::new(args.pool_address, provider).await?;
+    let tick_spacing = pool_contract.tick_spacing().await?;
 
     println!(" Tick Spacing: {}", tick_spacing);
-
     Ok(())
 }
 
-pub async fn pool_current_tick() -> Result<()> {
-    println!("Arb");
+pub async fn pool_current_tick(args: CurrentTickArgs, provider: RootProvider) -> Result<()> {
+    let pool_contract = UniswapV3PoolContract::new(args.pool_address, provider).await?;
+    let result = pool_contract.current_tick().await?;
 
-    // Input that will be supplied - maybe via environment.
-    let url = "https://rpc.immutable.com";
-
-    let pool_address = address!("EE997F15Eaca3012E4825F1AeFE12136216CF3AF");
-
-    let rpc_url = url.parse()?;
-    let provider = ProviderBuilder::new().on_http(rpc_url);
-
-    let pool_contract = UniswapV3PoolContract::new(pool_address, provider).await?;
-    let result = pool_contract.current_tick().await;
-    let current_tick = match result {
-        Ok(res) => res,
-        Err(error) => panic!("Problem fetching Uniswap V3 tick spacing: {error:?}"),
-    };
-
-    println!(" Current Tick: {}", current_tick);
-
+    println!(" Current Tick: {}", result);
     Ok(())
 }
 
-pub async fn pool_tick_dump() -> Result<()> {
-    println!("Arb");
-
-    // Input that will be supplied - maybe via environment.
-    let url = "https://rpc.immutable.com";
-
-    //let pool_address = address!("EE997F15Eaca3012E4825F1AeFE12136216CF3AF");
-
-    let factory_address = address!("56c2162254b0E4417288786eE402c2B41d4e181e");
-    let tok0_address = address!("52A6c53869Ce09a731CD772f245b97A4401d3348");
-    let tok1_address = address!("3A0C2Ba54D6CBd3121F01b96dFd20e99D1696C9D");
-
-    let rpc_url = url.parse()?;
-    let provider = ProviderBuilder::new().on_http(rpc_url);
+pub async fn pool_tick_dump(args: DumpArgs, provider: RootProvider) -> Result<()> {
+    let DumpArgs {
+        factory_address,
+        token_one_address,
+        token_two_address,
+    } = args;
 
     let pool = UniswapV3PoolSdk::from_pool_key(
         13371,
         factory_address,
-        tok0_address,
-        tok1_address,
+        token_one_address,
+        token_two_address,
         FeeAmount::MEDIUM,
         provider,
         None,
     )
     .await?;
-    let result = pool.dump().await;
-    let ignore = match result {
-        Ok(res) => res,
-        Err(error) => panic!("Error thrown: {error:?}"),
-    };
+    let dump = pool.dump().await?;
 
-    println!(" Ignore: {}", ignore);
-
+    println!("Pool dump: {}", dump);
     Ok(())
 }
 
-pub async fn pool_tick_info() -> Result<()> {
-    println!("Arb");
-
-    // Input that will be supplied - maybe via environment.
-    let url = "https://rpc.immutable.com";
-
-    //let pool_address = address!("EE997F15Eaca3012E4825F1AeFE12136216CF3AF");
-
-    let factory_address = address!("56c2162254b0E4417288786eE402c2B41d4e181e");
-    let tok0_address = address!("52A6c53869Ce09a731CD772f245b97A4401d3348");
-    let tok1_address = address!("3A0C2Ba54D6CBd3121F01b96dFd20e99D1696C9D");
-
-    let rpc_url = url.parse()?;
-    let provider = ProviderBuilder::new().on_http(rpc_url);
+pub async fn pool_tick_info(args: InfoArgs, provider: RootProvider) -> Result<()> {
+    let InfoArgs {
+        factory_address,
+        token_one_address,
+        token_two_address,
+    } = args;
 
     let pool = UniswapV3PoolSdk::from_pool_key(
         13371,
         factory_address,
-        tok0_address,
-        tok1_address,
+        token_one_address,
+        token_two_address,
         FeeAmount::MEDIUM,
         provider,
         None,
     )
     .await?;
-    let result = pool.info().await;
-    let ignore = match result {
-        Ok(res) => res,
-        Err(error) => panic!("Error thrown: {error:?}"),
-    };
+    let info = pool.info().await?;
 
-    println!(" Ignore: {}", ignore);
-
+    println!("Pool info: {}", info);
     Ok(())
 }
