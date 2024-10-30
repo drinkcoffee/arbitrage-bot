@@ -46,11 +46,11 @@ async fn main() -> eyre::Result<()> {
         (Commands::Erc20(args), provider) => match args.command {
             Erc20Commands::Symbol(args) => erc20_symbol(args, provider).await,
         },
-        (Commands::Pool(args), _) => match args.command {
-            PoolCommands::TickSpacing => pool_tick_spacing().await,
-            PoolCommands::CurrentTick => pool_current_tick().await,
-            PoolCommands::Dump => pool_tick_dump().await,
-            PoolCommands::Info => pool_tick_info().await,
+        (Commands::Pool(args), provider) => match args.command {
+            PoolCommands::TickSpacing(args) => pool_tick_spacing(args, provider).await,
+            PoolCommands::CurrentTick(args) => pool_current_tick(args, provider).await,
+            PoolCommands::Dump(args) => pool_tick_dump(args, provider).await,
+            PoolCommands::Info(args) => pool_tick_info(args, provider).await,
         },
         (Commands::Chain(args), provider) => match args.command {
             commands::ChainCommands::ID => chain_id(provider).await,
