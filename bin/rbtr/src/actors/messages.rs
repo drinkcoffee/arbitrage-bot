@@ -1,14 +1,12 @@
 use actix::prelude::*;
 
-/// Message to progress the Actor by a single tick.
+/// Control is a message to control the operation of an Actor.
 #[derive(Debug, Message)]
 #[rtype(result = "()")]
-pub struct Tick();
-
-/// Message to stop the Actor.
-#[derive(Debug, Message)]
-#[rtype(result = "()")]
-pub struct Stop();
+pub enum Control {
+    Tick,
+    Stop,
+}
 
 /// PriceDiff is just an example message for now.
 #[derive(Debug, Message)]

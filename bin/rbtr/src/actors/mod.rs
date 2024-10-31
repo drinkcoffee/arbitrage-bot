@@ -1,5 +1,5 @@
 mod messages;
-pub use messages::{PriceDiff, Stop, Subscribe, Tick};
+pub use messages::{Control, PriceDiff, Subscribe};
 
 mod monitor;
 pub use monitor::Monitor;
