@@ -10,11 +10,11 @@ pub struct Tick();
 #[rtype(result = "()")]
 pub struct Stop();
 
+/// PriceDiff is just an example message for now.
 #[derive(Debug, Message)]
 #[rtype(result = "()")]
 #[allow(dead_code)]
 pub struct PriceDiff {
-    // NOTE: this struct and its fields are just an example
     pub diff: f64,
 }
 

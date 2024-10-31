@@ -2,6 +2,8 @@ use actix::prelude::*;
 
 use super::{PriceDiff, Stop};
 
+/// Resolver is the actor responsible for handling all data and events
+/// derived from on-chain state that other actors may provide.
 pub struct Resolver {}
 
 impl Resolver {
