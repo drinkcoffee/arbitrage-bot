@@ -21,7 +21,7 @@ fn main() -> Result<()> {
     let cancel = CancellationToken::new();
     let cancel_clone = cancel.clone();
 
-    // Handle cancellation and wait for shutdown
+    // Handle SIGINT/SIGTERM.
     ctrlc::set_handler(move || {
         println!("received Ctrl+C!");
         cancel_clone.cancel();
