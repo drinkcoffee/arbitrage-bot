@@ -6,7 +6,7 @@ use super::{Stop, Tick};
 /// Monitor is the actor responsible for monitoring on-chain state
 /// and notifying subscribers of changes.
 ///
-/// It is driven by the `Tick` message.
+/// It is driven by the [Tick] message.
 pub struct Monitor {
     price_diff_subs: Vec<Recipient<PriceDiff>>,
 }
