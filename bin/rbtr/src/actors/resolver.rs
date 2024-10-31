@@ -28,12 +28,9 @@ impl Handler<Control> for Resolver {
     type Result = ();
 
     fn handle(&mut self, control: Control, ctx: &mut Self::Context) {
-        match control {
-            Control::Stop => {
-                println!("Stopping Resolver");
-                ctx.stop();
-            }
-            _ => (),
+        if let Control::Stop = control {
+            println!("Stopping Resolver");
+            ctx.stop();
         }
     }
 }
