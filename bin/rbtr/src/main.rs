@@ -23,7 +23,6 @@ fn main() -> Result<()> {
 
     // Handle SIGINT/SIGTERM.
     ctrlc::set_handler(move || {
-        println!("received Ctrl+C!");
         cancel_clone.cancel();
     })?;
 
