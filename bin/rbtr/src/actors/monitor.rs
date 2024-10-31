@@ -1,12 +1,10 @@
 use crate::{PriceDiff, Subscribe};
 use actix::prelude::*;
 
-use super::{Stop, Tick};
+use super::Control;
 
 /// Monitor is the actor responsible for monitoring on-chain state
 /// and notifying subscribers of changes.
-///
-/// It is driven by the [Tick] message.
 pub struct Monitor {
     price_diff_subs: Vec<Recipient<PriceDiff>>,
 }
@@ -31,22 +29,21 @@ impl Handler<Subscribe<PriceDiff>> for Monitor {
     }
 }
 
-impl Handler<Tick> for Monitor {
+impl Handler<Control> for Monitor {
     type Result = ();
 
-    fn handle(&mut self, _: Tick, _: &mut Self::Context) {
-        for sub in &self.price_diff_subs {
-            // TODO: handle error
-            sub.do_send(PriceDiff { diff: 0.1 });
+    fn handle(&mut self, control: Control, ctx: &mut Self::Context) {
+        match control {
+            Control::Stop => {
+                println!("Stopping Monitor");
+                ctx.stop();
+            }
+            Control::Tick => {
+                for sub in &self.price_diff_subs {
+                    // TODO: handle error
+                    sub.do_send(PriceDiff { diff: 0.1 });
+                }
+            }
         }
-    }
-}
-
-impl Handler<Stop> for Monitor {
-    type Result = ();
-
-    fn handle(&mut self, _: Stop, ctx: &mut Self::Context) {
-        println!("Stopping Monitor");
-        ctx.stop();
     }
 }

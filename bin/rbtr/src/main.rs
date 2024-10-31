@@ -43,10 +43,10 @@ fn main() -> Result<()> {
             select! {
                 // Shutdown.
                 _ = cancel.cancelled() => {
-                    if let Err(e) = monitor.send(Stop {}).await {
+                    if let Err(e) = monitor.send(Control::Stop).await {
                         eprintln!("Failed to send Stop to Monitor: {e}");
                     }
-                    if let Err(e) = resolver.send(Stop {}).await {
+                    if let Err(e) = resolver.send(Control::Stop).await {
                         eprintln!("Failed to send Stop to Resolver: {e}");
                     }
                     System::current().stop();
@@ -54,7 +54,7 @@ fn main() -> Result<()> {
                 }
                 // Tick.
                 _ = interval.tick() => {
-                    if let Err(e) = monitor.send(Tick {}).await {
+                    if let Err(e) = monitor.send(Control::Tick).await {
                         eprintln!("Failed to send Tick to Monitor: {e}");
                     }
                 }

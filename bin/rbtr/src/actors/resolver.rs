@@ -1,6 +1,6 @@
 use actix::prelude::*;
 
-use super::{PriceDiff, Stop};
+use super::{Control, PriceDiff};
 
 /// Resolver is the actor responsible for handling all data and events
 /// derived from on-chain state that other actors may provide.
@@ -24,11 +24,13 @@ impl Handler<PriceDiff> for Resolver {
     }
 }
 
-impl Handler<Stop> for Resolver {
+impl Handler<Control> for Resolver {
     type Result = ();
 
-    fn handle(&mut self, _: Stop, ctx: &mut Self::Context) {
-        println!("Stopping Resolver");
-        ctx.stop();
+    fn handle(&mut self, control: Control, ctx: &mut Self::Context) {
+        if let Control::Stop = control {
+            println!("Stopping Resolver");
+            ctx.stop();
+        }
     }
 }
