@@ -2,8 +2,9 @@ use clap::{Parser, Subcommand};
 
 mod commands;
 use commands::{
-    chain_id, erc20_symbol, erc20_list, finalized, latest, pool_current_tick, pool_tick_dump, pool_tick_info,
-    pool_tick_spacing, ChainArgs, Erc20Args, Erc20Commands, PoolArgs, PoolCommands,
+    chain_id, erc20_list, erc20_symbol, finalized, latest, pool_current_tick, pool_list,
+    pool_tick_dump, pool_tick_info, pool_tick_spacing, ChainArgs, Erc20Args, Erc20Commands,
+    PoolArgs, PoolCommands,
 };
 use lib::prelude::*;
 
@@ -50,6 +51,7 @@ async fn main() -> eyre::Result<()> {
         (Commands::Pool(args), provider) => match args.command {
             PoolCommands::TickSpacing(args) => pool_tick_spacing(args, provider).await,
             PoolCommands::CurrentTick(args) => pool_current_tick(args, provider).await,
+            PoolCommands::List(args) => pool_list(args, provider).await,
             PoolCommands::Dump(args) => pool_tick_dump(args, provider).await,
             PoolCommands::Info(args) => pool_tick_info(args, provider).await,
         },
