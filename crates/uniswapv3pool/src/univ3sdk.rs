@@ -134,4 +134,18 @@ impl UniswapV3PoolSdk {
         let hack = lower.as_i64();
         Ok(hack)
     }
+
+    pub fn one_line_info(&self) -> Result<()> {
+        let fee_num: usize = self.pool.fee as usize;
+        let fee_num = fee_num as f32;
+        let fee_num = fee_num / 10000.0;
+        println!(
+            "{:<4}%  {}  {:<25}  TODO       {}",
+            fee_num,
+            self.pool.address(None, None),
+            self.pool.liquidity,
+            self.pool.tick_current
+        );
+        Ok(())
+    }
 }
