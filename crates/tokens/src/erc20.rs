@@ -23,6 +23,7 @@ sol! {
         event Approval(address indexed owner, address indexed spender, uint256 value);
 
         function symbol() external view returns (string sym);
+        function decimals() external view returns (uint256 value);
     }
 
 }
@@ -34,9 +35,6 @@ pub struct Erc20 {
 impl Erc20 {
     pub async fn new(token_address: Address, provider: RootProvider) -> Result<Self> {
         let token_contract = IERC20::new(token_address, provider);
-        let tok0_symbol = token_contract.symbol().call().await?.sym;
-        println!("Sym: {}", tok0_symbol);
-
         Ok(Self { token_contract })
     }
 
@@ -52,6 +50,11 @@ impl Erc20 {
 
     pub async fn total_supply(&self) -> Result<U256> {
         let res = self.token_contract.totalSupply().call().await?.supply;
+        Ok(res)
+    }
+
+    pub async fn decimals(&self) -> Result<U256> {
+        let res = self.token_contract.decimals().call().await?.value;
         Ok(res)
     }
 }

@@ -2,14 +2,14 @@ use clap::{Parser, Subcommand};
 
 mod commands;
 use commands::{
-    chain_id, erc20_symbol, finalized, latest, pool_current_tick, pool_tick_dump, pool_tick_info,
+    chain_id, erc20_symbol, erc20_list, finalized, latest, pool_current_tick, pool_tick_dump, pool_tick_info,
     pool_tick_spacing, ChainArgs, Erc20Args, Erc20Commands, PoolArgs, PoolCommands,
 };
 use lib::prelude::*;
 
 #[derive(Debug, Parser)]
 #[command(name = "rb")]
-#[command(about = "R-bitrage Bot", long_about = None)]
+#[command(about = "CODAS", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -45,6 +45,7 @@ async fn main() -> eyre::Result<()> {
     match cli.into_command() {
         (Commands::Erc20(args), provider) => match args.command {
             Erc20Commands::Symbol(args) => erc20_symbol(args, provider).await,
+            Erc20Commands::List(args) => erc20_list(args, provider).await,
         },
         (Commands::Pool(args), provider) => match args.command {
             PoolCommands::TickSpacing(args) => pool_tick_spacing(args, provider).await,
