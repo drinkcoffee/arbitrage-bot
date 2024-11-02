@@ -8,7 +8,7 @@ The project is work in progress and is being developed as a side project. As suc
 
 The code is written primarily in Rust. Cargo is Rust's build system and package manager. To install Rust and Cargo:
 
-* Rust: [https://doc.rust-lang.org/cargo/getting-started/installation.html](https://doc.rust-lang.org/cargo/getting-started/installation.html). To 
+* Rust: [https://doc.rust-lang.org/cargo/getting-started/installation.html](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 * Cargo: [https://doc.rust-lang.org/cargo/getting-started/installation.html](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 
 # Run
