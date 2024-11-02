@@ -39,7 +39,7 @@ pub struct CurrentTickArgs {
 }
 
 const ADDR_ZERO: &str = "0000000000000000000000000000000000000000";
-const ADDRESS_ZERO: Address = address!("0000000000000000000000000000000000000000");
+//const ADDRESS_ZERO: Address = address!("0000000000000000000000000000000000000000");
 
 #[derive(Debug, Args)]
 #[command(args_conflicts_with_subcommands = true)]
