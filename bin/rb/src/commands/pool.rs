@@ -1,10 +1,10 @@
 use clap::{Args, Subcommand};
 use eyre::Result;
 
-use alloy::primitives::Address;
-//use alloy::primitives::{address, Address};
+use alloy::primitives::{address, Address};
 use lib::prelude::*;
 
+use tokens::erc20::Erc20;
 use tokens::erc20_constants;
 use uniswap_v3_sdk::prelude::FeeAmount;
 use uniswapv3pool::pool_constants;
@@ -40,7 +40,7 @@ pub struct CurrentTickArgs {
 }
 
 const ADDR_ZERO: &str = "0000000000000000000000000000000000000000";
-//const ADDRESS_ZERO: Address = address!("0000000000000000000000000000000000000000");
+const ADDRESS_ZERO: Address = address!("0000000000000000000000000000000000000000");
 
 #[derive(Debug, Args)]
 #[command(args_conflicts_with_subcommands = true)]
@@ -103,34 +103,87 @@ pub async fn pool_current_tick(args: CurrentTickArgs, provider: RootProvider) ->
 pub async fn pool_list(args: ListArgs, provider: RootProvider) -> Result<()> {
     let id = provider.get_chain_id().await?;
     let ListArgs {
-        factory_address,
-        token_one_address,
-        token_two_address,
+        mut factory_address,
+        mut token_one_address,
+        mut token_two_address,
     } = args;
 
-    let def_factory;
-    let def_token_one;
-    let def_token_two;
+    if factory_address == ADDRESS_ZERO
+        || token_one_address == ADDRESS_ZERO
+        || token_two_address == ADDRESS_ZERO
+    {
+        let def_factory;
+        let def_token_one;
+        let def_token_two;
 
-    match get_defaults(id) {
-        Ok(res) => {
-            def_factory = res.0;
-            def_token_one = res.1;
-            def_token_two = res.2;
+        match get_defaults(id) {
+            Ok(res) => {
+                def_factory = res.0;
+                def_token_one = res.1;
+                def_token_two = res.2;
+            }
+            Err(error) => {
+                panic!("Error {:?}", error);
+            }
         }
-        Err(error) => {
-            panic!("Error {:?}", error);
+        if factory_address == ADDRESS_ZERO {
+            factory_address = def_factory;
+            println!("Using default factory: {}", factory_address);
+        }
+        if token_one_address == ADDRESS_ZERO {
+            token_one_address = def_token_one;
+            println!("Using default token A: {}", token_one_address);
+        }
+        if token_two_address == ADDRESS_ZERO {
+            token_two_address = def_token_two;
+            println!("Using default token B: {}", token_two_address);
         }
     }
+    let tok_one_contract = Erc20::new(token_one_address, provider.clone()).await?;
+    let tok_one_symbol = tok_one_contract.symbol().await?;
+    let tok_two_contract = Erc20::new(token_two_address, provider.clone()).await?;
+    let tok_two_symbol = tok_two_contract.symbol().await?;
 
-    println!(
-        "args: f: {}, ta: {}, tb: {}",
-        factory_address, token_one_address, token_two_address
-    );
-    println!(
-        "defs: f: {:?}, ta: {}, tb: {}",
-        def_factory, def_token_one, def_token_two
-    );
+    println!("Liquidity Pools for:");
+    println!(" Factory: {}", factory_address);
+    println!(" Token A: {:<7}  {}", tok_one_symbol, token_one_address);
+    println!(" Token B: {:<7}  {}", tok_two_symbol, token_two_address);
+
+    let fees = &[
+        FeeAmount::LOWEST,
+        //FeeAmount::LOW_200,
+        //FeeAmount::LOW_300,
+        //FeeAmount::LOW_400,
+        FeeAmount::LOW,
+        FeeAmount::MEDIUM,
+        FeeAmount::HIGH,
+    ];
+
+    println!("Fee    Pool Address                                Liquidity                  Rate       Current Tick");
+    for fee in fees {
+        match UniswapV3PoolSdk::from_pool_key(
+            id,
+            factory_address,
+            token_one_address,
+            token_two_address,
+            *fee,
+            provider.clone(),
+            None,
+        )
+        .await
+        {
+            Ok(pool) => {
+                pool.one_line_info().ok();
+            }
+            Err(_error) => {
+                let fee_num: usize = *fee as usize;
+                let fee_num = fee_num as f32;
+                let fee_num = fee_num / 10000.0;
+                println!("{:<4}%  No liquidity pool", fee_num);
+            }
+        };
+    }
+
     Ok(())
 }
 
