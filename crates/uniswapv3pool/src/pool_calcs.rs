@@ -14,6 +14,5 @@ pub fn tick_to_exchange_rate(tick: i32, token_one_decimals: u64, token_two_decim
     if token_one_decimals != token_two_decimals {
         println!("Exchange when token decimals not the same not yet supported");
     }
-    let rate = val.powf(tick);
-    rate
+    val.powf(tick)
 }
