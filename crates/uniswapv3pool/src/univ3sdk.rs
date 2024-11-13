@@ -14,6 +14,7 @@ use eyre::Result;
 
 use lib::prelude::*;
 
+#[derive(Debug, Clone)]
 pub struct UniswapV3PoolSdk {
     pub pool: Pool,
     pub tick_data_provider: EphemeralTickDataProvider,

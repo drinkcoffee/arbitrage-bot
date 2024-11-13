@@ -6,19 +6,20 @@ members = [
     "crates/tokens",
     "crates/uniswapv3pool",
     "crates/lib",
-    "bin/rbtr", "tests",
+    "bin/rbtr",
+    "tests",
 ]
 
 [workspace.dependencies]
-uniswap-v3-sdk = { version = "2.2.0", features = ["extensions", "std"] }
-uniswap-sdk-core = "3.0.0"
+uniswap-v3-sdk = { version = "2.6.0", features = ["extensions", "std"] }
+uniswap-sdk-core = "3.2.0"
 eyre = "0.6.12"
-alloy = { version = "0.5", features = ["contract"] }
+alloy = { version = "0.6", features = ["contract"] }
 alloy-primitives = "0.8"
 alloy-sol-types = "0.8"
-tokio = { version = "1.40", features = ["full"] }
+tokio = { version = "1.41.1", features = ["full"] }
 toml = "0.8.19"
-serde = { version = "1.0.214", features = ["derive"] }
+serde = { version = "1.0.215", features = ["derive"] }
 
 tokens = { path = "./crates/tokens" }
 uniswapv3pool = { path = "./crates/uniswapv3pool" }
