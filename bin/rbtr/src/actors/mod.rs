@@ -1,5 +1,5 @@
 mod messages;
-pub use messages::{Control, PriceDiff, Subscribe};
+pub use messages::{Control, PoolUpdate, Subscribe};
 
 mod monitor;
 pub use monitor::Monitor;

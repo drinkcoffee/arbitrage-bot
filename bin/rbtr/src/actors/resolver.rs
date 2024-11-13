@@ -1,6 +1,6 @@
 use actix::prelude::*;
 
-use super::{Control, PriceDiff};
+use super::{Control, PoolUpdate};
 
 /// Resolver is the actor responsible for handling all data and events
 /// derived from on-chain state that other actors may provide.
@@ -16,10 +16,10 @@ impl Actor for Resolver {
     type Context = Context<Self>;
 }
 
-impl Handler<PriceDiff> for Resolver {
+impl Handler<PoolUpdate> for Resolver {
     type Result = ();
 
-    fn handle(&mut self, msg: PriceDiff, _: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: PoolUpdate, _: &mut Self::Context) -> Self::Result {
         println!("Price diff: {msg:?}");
     }
 }

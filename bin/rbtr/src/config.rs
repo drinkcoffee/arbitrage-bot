@@ -1,24 +1,58 @@
+use duration_string::DurationString;
 use eyre::{Context, Result};
 use lib::prelude::*;
 use serde::Deserialize;
-use std::{fs, path::Path};
+use std::{fs, path::Path, time::Duration};
 
 #[derive(Deserialize)]
 struct RawConfig {
-    url_one: String,
-    url_two: String,
+    tick_rate: DurationString,
+    monitors: Vec<RawMonitorConfig>,
+}
+
+#[derive(Deserialize)]
+struct RawMonitorConfig {
+    rpc_url: String,
+    factory: Address,
     token_one: Address,
     token_two: Address,
 }
 
-// TODO: remove allow when this is used
-#[allow(dead_code)]
 #[derive(Debug)]
 pub struct Config {
-    provider_one: RootProvider,
-    provider_two: RootProvider,
-    token_address_one: Address,
-    token_address_two: Address,
+    pub tick_rate: Duration,
+    pub monitors: Vec<MonitorConfig>,
+}
+
+impl From<RawConfig> for Config {
+    fn from(raw: RawConfig) -> Self {
+        let monitors = raw.monitors.into_iter().map(MonitorConfig::from).collect();
+        Self {
+            tick_rate: raw.tick_rate.into(),
+            monitors,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct MonitorConfig {
+    pub provider: RootProvider,
+    pub factory: Address,
+    pub token_one: Address,
+    pub token_two: Address,
+}
+
+impl From<RawMonitorConfig> for MonitorConfig {
+    fn from(raw: RawMonitorConfig) -> Self {
+        let rpc_url = Url::parse(&raw.rpc_url).unwrap();
+        let provider = ProviderBuilder::new().on_http(rpc_url);
+        Self {
+            provider,
+            factory: raw.factory,
+            token_one: raw.token_one,
+            token_two: raw.token_two,
+        }
+    }
 }
 
 impl Config {
@@ -29,19 +63,6 @@ impl Config {
         let raw =
             toml::from_str::<RawConfig>(&file_str).wrap_err("failed to parse config from toml")?;
 
-        // Parse URLs and create the providers.
-        let url_one =
-            Url::parse(&raw.url_one).wrap_err(format!("failed to parse url: {}", raw.url_one))?;
-        let url_two =
-            Url::parse(&raw.url_two).wrap_err(format!("failed to parse url: {}", raw.url_two))?;
-        let provider_one = ProviderBuilder::new().on_http(url_one);
-        let provider_two = ProviderBuilder::new().on_http(url_two);
-
-        Ok(Self {
-            provider_one,
-            provider_two,
-            token_address_one: raw.token_one,
-            token_address_two: raw.token_two,
-        })
+        Ok(raw.into())
     }
 }

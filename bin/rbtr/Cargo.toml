@@ -9,8 +9,11 @@ serde = { workspace = true }
 eyre = { workspace = true }
 alloy = { workspace = true }
 tokio = { workspace = true }
+uniswap-v3-sdk = { workspace = true }
 tokio-util = "0.7.12"
 actix = "0.13.5"
 ctrlc = "3.1.0"
+uniswapv3pool.workspace = true
+duration-string = { version = "0.4.0", features = ["serde"] }
 
 lib = { path = "../../crates/lib" }
